@@ -83,7 +83,7 @@ QUIT;
 - Naviguer vers [http://localhost:8080/nifi](http://localhost:8080/nifi) sur votre navigateur
 - Click droit sur le `canvas` (grand espace blanc) et choisissez `configure`
 
-![alt screenshots/text](image.png)
+![alt text](screenshots/image.png)
 
 - Allez dans l'onglet `Controller Services` et clicker sur l'icone `+`.
 
