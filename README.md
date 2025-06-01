@@ -1,8 +1,15 @@
 # Fichiers partager pour TP-M
 
 ## Utilisation
-- Naviguez directement depuis github dans le repertoire du composant que vous souhaitez installer.
-> exemple : pour Apache Nifi, clicker sur le dossier `install-nifi` 
-- Un fichier `.md` va s'afficher, deja bien formatter, pour faciliter la lecture.
+- `installs/` pour les installations des composants
+- `connexions/` pour les connexions entres composants
 
-- Bon courage à tous. 
+---
+
+- Naviguez directement depuis github dans le repertoire du composant que vous souhaitez installer.
+
+> exemple : pour Apache Nifi, naviguer dans `installs/Apache Nifi` 
+ 
+- Le contenu d'un fichier `README.md` contenant les instructions va s'afficher, deja bien formatter, pour faciliter la lecture.
+
+**Bon courage à tous !**

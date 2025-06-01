@@ -1,4 +1,4 @@
-# Instructions Installation Apache Nifi dans VM 
+# Instructions Installation Apache Nifi sur VM 
 
 - vagrant up
 - vagrant ssh
@@ -29,7 +29,7 @@ sudo ln -s /opt/nifi-1.25.0 /opt/nifi
 ### Configurer Nifi
 - Indiquer l'emplacement des libs Hadoop native à NiFi
 ```
-sudo -u nifi bash -c '
+sudo bash -c '
 echo "
 # --- custom paths ---
 java.arg.18=-Djava.library.path=/usr/local/hadoop-3.3.6/lib/native
@@ -38,13 +38,26 @@ nifi.nar.library.directory=./extensions
 '
 ```
 
-- Copier les processeurs Hbase et Hadoop dans `Nifi/extensions`
+- Copier les extensions Hbase et Hadoop dans `Nifi/extensions`
 ```
-sudo -u nifi mkdir -p /opt/nifi/extensions
+sudo mkdir -p /opt/nifi/extensions
 
-sudo -u nifi cp /usr/local/hadoop-3.3.6/etc/hadoop/*.xml \
+sudo cp /usr/local/hadoop-3.3.6/etc/hadoop/*.xml \
                 /opt/hbase/conf/hbase-site.xml           \
                 /opt/nifi/extensions/
+```
+
+- Créer un répertoire dans `/opt/nifi` pour ne pas polluer `lib/` et copier les `jar` essentiels de Hadoop
+```
+cd /opt/nifi
+mkdir -p lib/hadoop3
+
+cp /usr/local/hadoop-3.3.6/share/hadoop/common/*.jar    lib/hadoop3/
+cp /usr/local/hadoop-3.3.6/share/hadoop/common/lib/*.jar lib/hadoop3/
+cp /usr/local/hadoop-3.3.6/share/hadoop/hdfs/*.jar      lib/hadoop3/
+cp /usr/local/hadoop-3.3.6/share/hadoop/hdfs/lib/*.jar  lib/hadoop3/
+
+cd ~
 ```
 
 - Desactiver la securite HTTPS
@@ -97,4 +110,10 @@ vagrant ssh
 /opt/nifi/bin/nifi.sh start
 ```
 
-- ouvrir le navigateur a l'addresse `http://localhost:8080/nifi`
+- Verifier qu'il est marquer *Apache NiFi is currently running*
+```
+/opt/nifi/bin/nifi.sh status
+```
+
+- Ouvrir le navigateur a l'addresse [http://localhost:8080/nifi](http://localhost:8080/nifi)
+- *Attendre* 3 à 5 minutes, Nifi met du temp à demarer, rafraîchir regulierement la page.
