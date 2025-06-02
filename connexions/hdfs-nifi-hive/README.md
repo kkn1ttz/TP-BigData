@@ -1,5 +1,3 @@
-### <span style="color: red">!!! Mbola tsy vitaaaa !!!</span>
-
 # Instructions Connexion HDFS vers HIVE via Nifi
 
 ## Prérequis
@@ -32,7 +30,6 @@ hdfs dfs -put people.csv /data/people_hdfs/
 * Vérifier les données
 
 ```bash
-hdfs dfs -ls /data/people_hdfs
 hdfs dfs -cat /data/people_hdfs/people.csv
 ```
 
@@ -54,12 +51,9 @@ hdfs dfs -cat /data/people_hdfs/people.csv
 
 * Paramétrer :
 
-  * `Directory` = /data/people\_hdfs
+  * `Directory` = /data/people_hdfs
   * `Recurse Subdirectories` = true
   * `Minimum File Age` = 0 sec
-  * `Maximum File Age` = 0 sec
-  * `Minimum File Size` = 0 B
-  * `Maximum File Size` = 0 B
 
 ### 2. Ajouter un processeur `FetchHDFS`
 
@@ -80,6 +74,7 @@ hdfs dfs -cat /data/people_hdfs/people.csv
   * Dans `Relationships`, choisir `terminate` pour `failure`
 
 * Click droit sur le canvas puis `Start`
+> Vous pouvez `disable` les autres processeurs du canvas pour eviter qu'ils se lancent avec ce flow.
 
 ## Retour dans la VM - Vérification
 
@@ -89,13 +84,15 @@ hdfs dfs -cat /data/people_hdfs/people.csv
 hdfs dfs -ls /user/hive/warehouse/ext_people_hdfs
 ```
 
-* Lire le contenu d'un fichier
+* Lire le contenu du fichier
 
 ```
 hdfs dfs -cat /user/hive/warehouse/ext_people_hdfs/people.csv
 ```
 
 ## PARTIE TENA IZY
+
+### <span style="color: red">!!! Mbola tsy vitaaaa !!!</span>
 
 * Démarrer Beeline
 

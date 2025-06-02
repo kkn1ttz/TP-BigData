@@ -109,6 +109,7 @@ db.people.insertMany([
   * Dans `Relationships`, choisir `terminate` pour `failure`
 
 * Click droit sur le canvas puis `Start`
+> Vous pouvez `disable` les autres processeurs du canvas pour eviter qu'ils se lancent avec ce flow.
 
 ## Retour dans la VM - Vérification
 

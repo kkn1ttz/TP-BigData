@@ -149,6 +149,7 @@ QUIT;
 ![alt text](screenshots/image-14.png)
 
 - Click droit sur le canvas puis `Start`
+> Vous pouvez `disable` les autres processeurs du canvas pour eviter qu'ils se lancent avec ce flow.
 
 ### Retour dans la VM - Verification
 
