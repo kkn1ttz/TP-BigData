@@ -1,7 +1,8 @@
 # Instructions Connection MySQL vers HIVE via Nifi 
 
 ## Prerequis
-- Apache Nifi installer dans la VM
+Avoir completer :
+* [installs/Apache Nifi](https://github.com/kkn1ttz/TP-M/tree/master/installs/Apache%20Nifi)
 
 ## Mise en place intiale
 - Telecharger et placer le driver `mysql` pour nifi
@@ -18,7 +19,7 @@ cp /usr/local/hadoop-3.3.6/etc/hadoop/core-site.xml /opt/nifi/conf
 cp /usr/local/hadoop-3.3.6/etc/hadoop/hdfs-site.xml /opt/nifi/conf
 ```
 
-- Creer un repertoire pour acceuillir le resultat de Nifi dans Hive
+### Creer un repertoire pour acceuillir le resultat de Nifi dans Hive
 - Lancer HDFS
 ```
 start-dfs.sh
@@ -97,9 +98,9 @@ QUIT;
 - Remplissez les `properties`
 
     - `Database Connection URL`=  jdbc:mysql://localhost:3306/nifi_test?serverTimezone=UTC&useSSL=false
-    - `DB Driver Class Name   `=  com.mysql.cj.jdbc.Driver
-    - `Database User          `=  nifi
-    - `Password               `=  nifiPW
+    - `DB Driver Class Name`=  com.mysql.cj.jdbc.Driver
+    - `Database User`=  nifi
+    - `Password`=  nifiPW
 
 ![alt text](screenshots/image-3.png)
 
@@ -151,22 +152,31 @@ QUIT;
 
 ### Retour dans la VM - Verification
 
-- Lister si le dossier `ext_people` a ete crée par nifi
+- Lister si le dossier `ext_people_mysql` a ete crée par nifi
 ```
-hdfs dfs -ls /user/hive/warehouse/ext_people
+hdfs dfs -ls /user/hive/warehouse/ext_people_mysql
 ```
 
 - vous devrier voir une ligne comme ceci :
 ```
--rw-r--r--   1 vagrant supergroup        101 2025-06-01 15:47 /user/hive/warehouse/ext_people/b7591f3c-3450-49e9-a031-ba7c7c7bb3cb
+-rw-r--r--   1 vagrant supergroup        101 2025-06-01 15:47 /user/hive/warehouse/ext_people_mysql/b7591f3c-3450-49e9-a031-ba7c7c7bb3cb
 ```
 
-- prendre le nom du fichier dans `ext_people` et lire son contenu
+- prendre le nom du fichier dans `ext_people_mysql` et lire son contenu
 ```
-hdfs dfs -cat /user/hive/warehouse/ext_people/b7591f3c-3450-49e9-a031-ba7c7c7bb3cb
+hdfs dfs -cat /user/hive/warehouse/ext_people_mysql/b7591f3c-3450-49e9-a031-ba7c7c7bb3cb
 ```
 ![alt text](screenshots/image-15.png)
 
 - Si vous avez le meme output que sur l'image c'est OK pour la partie MySQL -> Nifi -> Hive
 
 Toutes mes Felicitations.
+
+## This is the tandremo
+#### Pour que le flow Nifi renvoie des données.
+- Click droit sur le processor `QueryDatabaseTable` -> `View state` -> `Clear state`
+- Le processor enregistre la derniere valeur maximum de la colonne `id` pour ne par renvoyer des lignes deja envoyées *(pas important dans notre cas)*.
+- Ou juste inseré une nouvelle ligne dans `mysql>`.
+
+## PARITE TENA IZY
+>TO DO
