@@ -1,5 +1,3 @@
-### <span style="color: red">!!! Mbola tsy vitaaaa !!!</span>
-
 # Instructions Connexion MongoDB vers HIVE via Nifi
 
 ## Prérequis
@@ -11,6 +9,20 @@ Avoir complété :
 * [connexions/mysql-nifi-hive](https://github.com/kkn1ttz/TP-M/tree/master/connexions/mysql-nifi-hive)
 
 ## Mise en place initiale
+
+
+* Télécharger et deplacer les drivers MongoDB pour nifi
+
+```bash
+cd /tmp
+wget https://repo1.maven.org/maven2/org/mongodb/mongodb-driver-sync/4.4.1/mongodb-driver-sync-4.4.1.jar -O mongodb-driver-sync-4.4.1.jar
+wget https://repo1.maven.org/maven2/org/mongodb/bson/4.4.1/bson-4.4.1.jar -O bson-4.4.1.jar
+wget https://repo1.maven.org/maven2/org/mongodb/mongodb-driver-core/4.4.1/mongodb-driver-core-4.4.1.jar -O mongodb-driver-core-4.4.1.jar
+sudo mv mongodb-driver-sync-4.4.1.jar /opt/nifi/lib/
+sudo mv bson-4.4.1.jar /opt/nifi/lib/
+sudo mv mongodb-driver-core-4.4.1.jar /opt/nifi/lib/
+cd ~
+```
 
 * Lancer HDFS
 
@@ -26,6 +38,12 @@ start-dfs.sh
 sudo systemctl start mongod
 ```
 
+
+* Entrer dans le shell `mongo`
+```
+mongo
+```
+
 * Création d'une base de données et d'une collection avec des données
 
 ```javascript
@@ -37,19 +55,6 @@ db.people.insertMany([
 ])
 ```
 
-## Ajout du Driver MongoDB dans Nifi
-
-* Télécharger le driver MongoDB compatible avec Nifi 1.25.0 et MongoDB 4.4
-
-```bash
-wget https://repo1.maven.org/maven2/org/mongodb/mongodb-driver-sync/4.4.3/mongodb-driver-sync-4.4.3.jar
-```
-
-* Copier le fichier dans le dossier `lib` de Nifi
-
-```bash
-cp mongodb-driver-sync-4.4.3.jar /opt/nifi/lib/
-```
 
 ## Partie Nifi
 
@@ -63,7 +68,6 @@ cp mongodb-driver-sync-4.4.3.jar /opt/nifi/lib/
 
 * Naviguer vers [http://localhost:8080/nifi](http://localhost:8080/nifi) sur votre navigateur
 
-* Créer les services `JsonTreeReader` et `CSVRecordSetWriter` pour la conversion JSON -> CSV
 
 * Ensuite, ajouter les processeurs suivants :
 
@@ -78,21 +82,17 @@ cp mongodb-driver-sync-4.4.3.jar /opt/nifi/lib/
   * `Query` = `{}`
   * `Projection` = (laisser vide)
 
+* Schedulling
+  * `Run schedule` = 59 min
+> Ne pas oublier sinon vous allez vite vous retrouvez avec des milliers de flowfiles en 1 sec sur nifi
+
 ### 2. Ajouter un processeur `ConvertRecord`
 
 * `Record Reader` = JsonTreeReader
+  * Créer le service `JsonTreeReader`
+  * Enable le service
 * `Record Writer` = CSVRecordSetWriter
-
-Configurer :
-
-* `JsonTreeReader` :
-
-  * `Schema Access Strategy` = Infer Schema
-* `CSVRecordSetWriter` :
-
-  * `Schema Access Strategy` = Use Schema from Record
-  * `Record Separator` = `\n`
-  * `Include Header Line` = true
+  * Le meme qu'utiliser pour `mysql-nifi-hive`
 
 ### 3. Ajouter un processeur `PutHDFS`
 
@@ -102,6 +102,7 @@ Configurer :
   * `Conflict Resolution Strategy` = replace
 
 * Relier les processeurs : `GetMongo` -> `ConvertRecord` -> `PutHDFS`
+  * relashionships `success` et `original`
 
 * Configurer `ConvertRecord` et `PutHDFS` pour qu'ils soient `valid`
 
@@ -124,6 +125,8 @@ hdfs dfs -cat /user/hive/warehouse/ext_people_mongo/nom-du-fichier
 ```
 
 ## PARTIE TENA IZY
+### <span style="color: red">!!! Mbola tsy vitaaaa !!!</span>
+
 
 * Démarrer Beeline
 
