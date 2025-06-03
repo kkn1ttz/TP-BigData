@@ -1,0 +1,15 @@
+1- demarrer le hdfs
+# Pour un cluster simple (single-node) :
+start-dfs.sh
+
+# Pour un cluster complet :
+start-all.sh
+
+2- création de la répértoire dédié
+hadoop fs -mkdir -p /data/transport/roads/
+
+3- copie du dossier datasets(de avotra) dans la repertoire du vagrant
+
+4-importer le dataset vers la répartoire dedié et verifier que le dataset y est inséré
+hadoop fs -put /vagrant/datasets/hdfs/Accident_Road_Characteristics.csv /data/transport/roads/
+hadoop fs -cat /data/transport/roads/Accident_Road_Characteristics.csv | head -n 5
