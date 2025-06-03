@@ -3,6 +3,7 @@
 ## Utilisation
 - `installs/` pour les installations des composants
 - `connexions/` pour les connexions entres composants
+- `datasets/` pour les données en format .csv
 
 ---
 
