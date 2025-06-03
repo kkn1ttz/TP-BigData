@@ -1,0 +1,6 @@
+export MYTPHOME=/vagrant/TpBigData
+
+javac -g -cp $MYTPHOME/lib/mysql-connector-java-8.0.25.jar:$MYTPHOME/tpnosql $MYTPHOME/tpmysql/script/insertMySQL.java
+
+USE vehicledb;
+SELECT COUNT(*) FROM electric_vehicles;
