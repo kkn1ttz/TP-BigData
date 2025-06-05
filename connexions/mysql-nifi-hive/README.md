@@ -180,4 +180,44 @@ Toutes mes Felicitations.
 - Ou juste inseré une nouvelle ligne dans `mysql>`.
 
 ## PARITE TENA IZY
->TO DO
+
+* Reproduire le scenario de test, voici les parties qui changent
+  * On suppose que les table dans mysql sont deja crées et remplies via scripts d'insertion
+  * `DBCPConnectionPool` 
+    * `Database Connection URL` = jdbc:mysql://localhost:3306/`<nom-base-de-donnees>`?serverTimezone=UTC&useSSL=false
+  * `PutHDFS`
+    * `Directory`= /tmp/`<nom-table>` (repertoire utiliser par Hive pour creer la table interne plus tard)
+
+* Démarrer Beeline
+> TO DO (tsy tadidiko le commande)
+
+* Créer une table **interne** Hive (exemple, modifier en fonction du shema)
+
+```sql
+CREATE TABLE <nom-table> (
+    _id STRING,
+    first_name STRING,
+    last_name STRING,
+    city STRING,
+    ...
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+```
+
+* Charger les données depuis HDFS
+
+```sql
+LOAD DATA INPATH '/tmp/<nom-table>'
+INTO TABLE <nom-table>;
+```
+
+* Vérifier les données
+
+```sql
+SELECT * FROM <nom-table>;
+```
+
+* Refaire l'operation pour chaque table
+* Table maintenant accessible via python

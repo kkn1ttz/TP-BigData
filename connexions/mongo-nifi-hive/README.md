@@ -82,10 +82,6 @@ db.people.insertMany([
   * `Query` = `{}`
   * `Projection` = (laisser vide)
 
-* Schedulling
-  * `Run schedule` = 59 min
-> Ne pas oublier sinon vous allez vite vous retrouvez avec des milliers de flowfiles en 1 sec sur nifi
-
 ### 2. Ajouter un processeur `ConvertRecord`
 
 * `Record Reader` = JsonTreeReader
@@ -125,20 +121,33 @@ hdfs dfs -ls /user/hive/warehouse/ext_people_mongo
 hdfs dfs -cat /user/hive/warehouse/ext_people_mongo/nom-du-fichier
 ```
 
-## PARTIE TENA IZY
-### <span style="color: red">!!! Mbola tsy vitaaaa !!!</span>
+## This is the tandremo
+#### Pour ne pas surcharger le flow Nifi.
+- Configurer `Schedulling` du processor `GetMongo`
+  - `Run schedule` = 59 min
+  - C'est l'intervalle entre laquelle le processor GetMongo s'execute
 
+## PARTIE TENA IZY
+
+* Reproduire le scenario de test, voici les parties qui changent
+  * On suppose que les table dans mongoDB sont deja crées et remplies via scripts d'insertion
+  * `GetMongo`
+    * `Database Name` = `<nom-base-de-donnee>`
+    * `Collection Name` = `<nom-table>`
+  * `PutHDFS` -> `Directory` -> /tmp/`<nom-table>` (repertoire utiliser par Hive pour creer la table interne plus tard)
 
 * Démarrer Beeline
+> TO DO (tsy tadidiko le commande)
 
-* Créer une table **interne** Hive
+* Créer une table **interne** Hive (exemple, modifier en fonction du shema)
 
 ```sql
-CREATE TABLE people_mongo (
+CREATE TABLE <nom-table> (
     _id STRING,
     first_name STRING,
     last_name STRING,
-    city STRING
+    city STRING,
+    ...
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -148,21 +157,15 @@ STORED AS TEXTFILE;
 * Charger les données depuis HDFS
 
 ```sql
-LOAD DATA INPATH '/tmp/ext_people_mongo'
-INTO TABLE people_mongo;
+LOAD DATA INPATH '/tmp/<nom-table>'
+INTO TABLE <nom-table>;
 ```
 
 * Vérifier les données
 
 ```sql
-SELECT * FROM people_mongo;
+SELECT * FROM <nom-table>;
 ```
 
-Vous devriez voir :
-
-| \_id          | first\_name | last\_name | city          |
-| ------------- | ----------- | ---------- | ------------- |
-| ObjectId(...) | Alan        | Turing     | London        |
-| ObjectId(...) | Katherine   | Johnson    | West Virginia |
-
-Toutes mes Félicitations pour MongoDB -> Nifi -> Hive (Table Interne) !
+* Refaire l'operation pour chaque table
+* Table maintenant accessible via python
