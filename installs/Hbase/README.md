@@ -1,5 +1,18 @@
 # Instructions Installation Apache HBase sur VM
 
+### Desinstaller l'ancienne version
+
+* Stopper si deja lancer
+```
+/opt/hbase/bin/stop-hbase.sh
+```
+
+* Effacer les repertoires
+```
+sudo rm -rf /opt/hbase
+sudo rm -rf /opt/hbase-data
+```
+
 ### Installer JDK-11 (si pas déjà installé)
 
 ```sh
