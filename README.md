@@ -3,7 +3,7 @@
 ## Utilisation
 - `installs/` pour les installations des composants
 - `connexions/` pour les connexions entres composants
-- `datasets/` pour les données en format .csv
+- `datasets/` pour les données en formats .csv
 
 ---
 
@@ -12,5 +12,17 @@
 > exemple : pour Apache Nifi, naviguer dans `installs/Apache Nifi` 
  
 - Le contenu d'un fichier `README.md` contenant les instructions va s'afficher, deja bien formatter, pour faciliter la lecture.
+- dans `connexions/` vous aurez un fichier `.xml`, en template à importer dans Nifi.
 
-**Bon courage à tous !**
+## Prerequis
+
+* Installation vagrant VM (celle du cours)
+* Configuration DNS dans la VM
+```
+sudo nano /etc/resolv.conf
+```
+
+* Rajoutter cette ligne
+```
+nameserver 8.8.8.8
+```

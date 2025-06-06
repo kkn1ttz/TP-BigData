@@ -90,38 +90,44 @@ hdfs dfs -ls /user/hive/warehouse/ext_people_hdfs
 hdfs dfs -cat /user/hive/warehouse/ext_people_hdfs/people.csv
 ```
 
+## This is the tandremo
+#### Pour ne pas surcharger le flow Nifi.
+- Configurer `Schedulling` du processor `ListHDFS` ou `FetchHDFS`
+  - `Run schedule` = 59 min
+  - C'est l'intervalle entre laquelle le processor s'execute
+
 ## PARTIE TENA IZY
 
-### <span style="color: red">!!! Mbola tsy vitaaaa !!!</span>
+* Reproduire le scenario de test, voici les parties qui changent
+  * On suppose que les "repertoires" (tables) dans HDFS sont deja crées et remplies via scripts d'insertion
+  * `ListHDFS` 
+    * `Directory` = /data/`<nom-table>`
+  * `PutHDFS`
+    * `Directory`= /user/warehouse/hive/`<nom-table>`
 
 * Démarrer Beeline
 
 * Créer une table **externe** Hive
 
 ```sql
-CREATE EXTERNAL TABLE ext_people_hdfs (
-    id INT,
+CREATE EXTERNAL TABLE <nom-table> (
+    _id STRING,
     first_name STRING,
     last_name STRING,
-    city STRING
+    city STRING,
+    ...
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION '/user/hive/warehouse/ext_people_hdfs/';
+LOCATION '/user/warehouse/hive/<nom-table>/';
 ```
 
 * Vérifier les données
 
 ```sql
-SELECT * FROM ext_people_hdfs;
+SELECT * FROM <nom-table>;
 ```
 
-Vous devriez voir :
-
-| id | first\_name | last\_name | city     |
-| -- | ----------- | ---------- | -------- |
-| 1  | Ada         | Lovelace   | London   |
-| 2  | Grace       | Hopper     | New York |
-
-Toutes mes Félicitations pour HDFS -> Nifi -> Hive (Table Externe) !
+* Refaire l'operation pour chaque table
+* Table maintenant accessible via python
