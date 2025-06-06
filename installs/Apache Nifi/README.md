@@ -50,12 +50,12 @@ sudo cp /usr/local/hadoop-3.3.6/etc/hadoop/*.xml \
 - Créer un répertoire dans `/opt/nifi` pour ne pas polluer `lib/` et copier les `jar` essentiels de Hadoop
 ```
 cd /opt/nifi
-mkdir -p lib/hadoop3
+sudo mkdir -p lib/hadoop3
 
-cp /usr/local/hadoop-3.3.6/share/hadoop/common/*.jar    lib/hadoop3/
-cp /usr/local/hadoop-3.3.6/share/hadoop/common/lib/*.jar lib/hadoop3/
-cp /usr/local/hadoop-3.3.6/share/hadoop/hdfs/*.jar      lib/hadoop3/
-cp /usr/local/hadoop-3.3.6/share/hadoop/hdfs/lib/*.jar  lib/hadoop3/
+sudo cp /usr/local/hadoop-3.3.6/share/hadoop/common/*.jar    lib/hadoop3/
+sudo cp /usr/local/hadoop-3.3.6/share/hadoop/common/lib/*.jar lib/hadoop3/
+sudo cp /usr/local/hadoop-3.3.6/share/hadoop/hdfs/*.jar      lib/hadoop3/
+sudo cp /usr/local/hadoop-3.3.6/share/hadoop/hdfs/lib/*.jar  lib/hadoop3/
 
 cd ~
 ```
