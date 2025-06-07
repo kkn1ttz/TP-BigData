@@ -5,6 +5,7 @@
 Avoir complété :
 
 * [installs/Apache Nifi](https://github.com/kkn1ttz/TP-M/tree/master/installs/Apache%20Nifi)
+* [installs/Hadoop HDFS](https://github.com/kkn1ttz/TP-M/tree/master/installs/Hadoop)
 * [connexions/mysql-nifi-hive](https://github.com/kkn1ttz/TP-M/tree/master/connexions/mysql-nifi-hive)
 
 ## Mise en place initiale

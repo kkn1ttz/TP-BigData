@@ -34,25 +34,28 @@ start-dfs.sh
 
 * Assurez-vous que MongoDB est démarré
 
-```bash
+```
 sudo systemctl start mongod
 ```
-
 
 * Entrer dans le shell `mongo`
 ```
 mongo
 ```
 
-* Création d'une base de données et d'une collection avec des données
+* Création d'une base de données
 
 ```javascript
-use testdb
+use accidentDB
 
-db.people.insertMany([
-  { first_name: "Alan", last_name: "Turing", city: "London" },
-  { first_name: "Katherine", last_name: "Johnson", city: "West Virginia" }
-])
+exit
+```
+
+* Importer les données csv dans mongo
+
+```
+mongoimport --type csv --headerline --db accidentDB --collection accident_environmental_conditions --file /vagrant/installationn/mongoDonnee/Accident_Environmental_Conditions.csv
+mongoimport --type csv --headerline --db accidentDB --collection accident_locations --file /vagrant/installationn/mongoDonnee/Accident_Locations.csv
 ```
 
 
@@ -69,6 +72,14 @@ db.people.insertMany([
 * Naviguer vers [http://localhost:8080/nifi](http://localhost:8080/nifi) sur votre navigateur
 
 
+* ajouter 2 processeurs group(pour chaque collections):
+
+
+## Proccess group 1
+
+* entrer dans le premier processeur group (pour la première collection):
+
+
 * Ensuite, ajouter les processeurs suivants :
 
 ### 1. Ajouter un processeur `GetMongo`
@@ -76,29 +87,39 @@ db.people.insertMany([
 * Paramétrer :
 
   * `Mongo URI` = mongodb://localhost:27017
-  * `Database Name` = testdb
-  * `Collection Name` = people
-  * `Batch Size` = 1000
+  * `Database Name` = accidentDB
+  * `Collection Name` = accident_environmental_conditions
+  * `Batch Size` = 40000
   * `Query` = `{}`
   * `Projection` = (laisser vide)
 
-### 2. Ajouter un processeur `ConvertRecord`
+### 2. Ajouter un processeur `MergeRecord`
 
 * `Record Reader` = JsonTreeReader
   * Créer le service `JsonTreeReader`
   * Enable le service
 * `Record Writer` = CSVRecordSetWriter
-  * Le meme qu'utiliser pour `mysql-nifi-hive`
+  * Le meme qu'on a utiliser pour `mysql-nifi-hive`
+* `Merge Strategy` = Bin-Packing Algorithm
+* `Maximum Number of Records` = 40000
+*  `Max Bin Age` = 1 min
 
-### 3. Ajouter un processeur `PutHDFS`
+### 3. Ajouter un processeur `UpdateAttribute`
+
+* `filename` = donnees
+
+
+### 4. Ajouter un processeur `PutHDFS`
 
 * Paramétrer :
 
-  * `Directory` = /user/hive/warehouse/ext_people_mongo
+  * `Hadoop Configuration Resources` = /opt/nifi/conf/core-site.xml,/opt/nifi/conf/hdfs-site.xml
+  * `Directory` = /user/hive/warehouse/accident_environmental_conditions
   * `Conflict Resolution Strategy` = replace
 
-* Relier les processeurs : `GetMongo` -> `ConvertRecord` -> `PutHDFS`
-  * relashionships `success` et `original`
+  * Relier les processeurs : `GetMongo` -> `MergeRecord` -> `UpdateAttribute` -> `PutHDFS`
+    * relashionships `success` et `original`
+    * Quand on relie `MergeRecord` -> `UpdateAttribute` : on sélectionne suleument merged
 
 * Configurer `ConvertRecord` et `PutHDFS` pour qu'ils soient `valid`
 
@@ -109,45 +130,140 @@ db.people.insertMany([
 
 ## Retour dans la VM - Vérification
 
-* Lister si le dossier `/user/hive/warehouse/ext_people_mongo` a été créé par Nifi
+* Lister si le dossier `/user/hive/warehouse/accident_environmental_conditions` a été créé par Nifi
 
 ```
-hdfs dfs -ls /user/hive/warehouse/ext_people_mongo
+hdfs dfs -ls /user/hive/warehouse/accident_environmental_conditions
 ```
 
 * Lire le contenu d'un fichier
 
 ```
-hdfs dfs -cat /user/hive/warehouse/ext_people_mongo/nom-du-fichier
+hdfs dfs -cat /user/hive/warehouse/accident_environmental_conditions/donnees
 ```
 
-## This is the tandremo
-#### Pour ne pas surcharger le flow Nifi.
+#### Warning
+##### Pour ne pas surcharger le flow Nifi.
 - Configurer `Schedulling` du processor `GetMongo`
   - `Run schedule` = 59 min
   - C'est l'intervalle entre laquelle le processor GetMongo s'execute
 
-## PARTIE TENA IZY
+## Proccess group 2
 
-* Reproduire le scenario de test, voici les parties qui changent
-  * On suppose que les table dans mongoDB sont deja crées et remplies via scripts d'insertion
-  * `GetMongo`
-    * `Database Name` = `<nom-base-de-donnee>`
-    * `Collection Name` = `<nom-table>`
-  * `PutHDFS` -> `Directory` -> /tmp/`<nom-table>` (repertoire utiliser par Hive pour creer la table interne plus tard)
+* entrer dans le premier processeur group (pour la deuxième collection):
+
+
+* Ensuite, ajouter les processeurs suivants :
+
+### 1. Ajouter un processeur `GetMongo`
+
+* Paramétrer :
+
+  * `Mongo URI` = mongodb://localhost:27017
+  * `Database Name` = accidentDB
+  * `Collection Name` = accident_locations
+  * `Batch Size` = 40000
+  * `Query` = `{}`
+  * `Projection` = (laisser vide)
+
+### 2. Ajouter un processeur `MergeRecord`
+
+* `Record Reader` = JsonTreeReader
+  * Créer le service `JsonTreeReader`
+  * Enable le service
+* `Record Writer` = CSVRecordSetWriter
+  * Le meme qu'on a utiliser pour `mysql-nifi-hive`
+* `Merge Strategy` = Bin-Packing Algorithm
+* `Maximum Number of Records` = 40000
+*  `Max Bin Age` = 1 min
+
+### 3. Ajouter un processeur `UpdateAttribute`
+
+* `filename` = donneesTwo
+
+
+### 4. Ajouter un processeur `PutHDFS`
+
+* Paramétrer :
+
+  * `Hadoop Configuration Resources` = /opt/nifi/conf/core-site.xml,/opt/nifi/conf/hdfs-site.xml
+  * `Directory` = /user/hive/warehouse/accident_locations
+  * `Conflict Resolution Strategy` = replace
+
+  * Relier les processeurs : `GetMongo` -> `MergeRecord` -> `UpdateAttribute` -> `PutHDFS`
+    * relashionships `success` et `original`
+    * Quand on relie `MergeRecord` -> `UpdateAttribute` : on sélectionne suleument merged
+
+* Configurer `ConvertRecord` et `PutHDFS` pour qu'ils soient `valid`
+
+  * Dans `Relationships`, choisir `terminate` pour `failure`
+
+* Click droit sur le canvas puis `Start`
+> Vous pouvez `disable` les autres processeurs du canvas pour eviter qu'ils se lancent avec ce flow.
+
+## Retour dans la VM - Vérification
+
+* Lister si le dossier `/user/hive/warehouse/accident_locations` a été créé par Nifi
+
+```
+hdfs dfs -ls /user/hive/warehouse/accident_locations
+```
+
+* Lire le contenu d'un fichier
+
+```
+hdfs dfs -cat /user/hive/warehouse/accident_locations/donneesTwo
+```
+
+#### Warning
+##### Pour ne pas surcharger le flow Nifi.
+- Configurer `Schedulling` du processor `GetMongo`
+  - `Run schedule` = 59 min
+  - C'est l'intervalle entre laquelle le processor GetMongo s'execute
+
+## PARTIE HIVE
 
 * Démarrer Beeline
-> TO DO (tsy tadidiko le commande)
 
-* Créer une table **interne** Hive (exemple, modifier en fonction du shema)
+* Créer des tables **interne** Hive (pour chaque collection )
 
 ```sql
-CREATE TABLE <nom-table> (
-    _id STRING,
-    first_name STRING,
-    last_name STRING,
-    city STRING,
-    ...
+CREATE TABLE accident_environmental_conditions (
+    `_id` STRING,
+    OBJECTID INT,
+    YEAR INT,
+    MONTH INT,
+    MONTHNAME STRING,
+    DAY INT,
+    DAYNAME STRING,
+    HOUR INT,
+    HOURNAME STRING,
+    MINUTE INT,
+    LGT_COND INT,
+    LGT_CONDNAME STRING,
+    WEATHER INT,
+    WEATHERNAME STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ','
+STORED AS TEXTFILE;
+
+
+CREATE TABLE accident_locations (
+    `_id` STRING,
+    OBJECTID INT,
+    STATE INT,
+    STATENAME STRING,
+    COUNTY INT,
+    COUNTYNAME STRING,
+    CITY INT,
+    CITYNAME STRING,
+    LATITUDE DOUBLE,
+    LONGITUD DOUBLE,
+    x DOUBLE,
+    y DOUBLE,
+    RUR_URB INT,
+    RUR_URBNAME STRING
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
@@ -157,14 +273,20 @@ STORED AS TEXTFILE;
 * Charger les données depuis HDFS
 
 ```sql
-LOAD DATA INPATH '/tmp/<nom-table>'
-INTO TABLE <nom-table>;
+LOAD DATA INPATH '/user/hive/warehouse/accident_environmental_conditions/donnees'
+INTO TABLE accident_environmental_conditions;
+
+
+LOAD DATA INPATH '/user/hive/warehouse/accident_locations/donneesTwo'
+INTO TABLE accident_locations;
 ```
 
 * Vérifier les données
 
 ```sql
-SELECT * FROM <nom-table>;
+SELECT * FROM accident_environmental_conditions;
+
+SELECT * FROM accident_locations;
 ```
 
 * Refaire l'operation pour chaque table
