@@ -61,7 +61,7 @@ pip install pandas==1.5.3 numpy==1.23.5 jaydebeapi JPype1
 * Lancer le script
 ```
 python analyse.py
-``
+```
 
 > Les resulats des analyses doivent s'afficher sous forme de tableau
 
