@@ -48,11 +48,17 @@ source ~/.bashrc
 hbase shell
 ```
 
-```hbase
-create 'people_hbase', 'info'
-put 'people_hbase', 'row1', 'info:first_name', 'Ada'
-put 'people_hbase', 'row1', 'info:last_name', 'Lovelace'
-put 'people_hbase', 'row1', 'info:city', 'London'
+```hbase (importer tous les donnees dans le fichier hql, l'apercu du fichier ci-dessous)
+create 'accident_response_times', 'data'
+
+put 'accident_response_times', '1', 'data:ARR_HOUR', '13'
+put 'accident_response_times', '1', 'data:ARR_MIN', '4'
+put 'accident_response_times', '1', 'data:HOSP_HR', '13'
+put 'accident_response_times', '1', 'data:HOSP_MN', '47'
+put 'accident_response_times', '2', 'data:ARR_HOUR', '99'
+put 'accident_response_times', '2', 'data:ARR_MIN', '99'
+put 'accident_response_times', '2', 'data:HOSP_HR', '99'
+
 exit
 ```
 
@@ -83,8 +89,8 @@ exit
 
 * Paramétrer :
 
-  * `Table Name` = people_hbase
-  * `Columns` = info:first_name,info:last_name,info:city
+  * `Table Name` = accident_response_times
+  * `Columns` = info:OBJECTID,info:ARR_HOUR,info:ARR_MIN,info:HOSP_HR,info:HOSP_MN
   * `JsonFormat` = col-qual-and-val
   * `Encoding Strategy` = None
 
@@ -99,7 +105,7 @@ exit
 
 * Paramétrer :
 
-  * `Directory` = /user/hive/warehouse/ext\_people\_hbase
+  * `Directory` = /user/hive/warehouse/accident_response_times/
   * `Conflict Resolution Strategy` = replace
 
 ### 5. Ajouter un simple processeur `GenerateFlowFile` avant ScanHbase
@@ -120,16 +126,16 @@ exit
 
 ## Retour dans la VM - Vérification
 
-* Lister si le dossier `/user/hive/warehouse/ext_people_hbase` a été créé par Nifi
+* Lister si le dossier `/user/hive/warehouse/accident_response_times` a été créé par Nifi
 
 ```bash
-hdfs dfs -ls /user/hive/warehouse/ext_people_hbase
+hdfs dfs -ls /user/hive/warehouse/accident_response_times
 ```
 
 * Lire le contenu du fichier
 
 ```bash
-hdfs dfs -cat /user/hive/warehouse/ext_people_hbase/nom-du-fichier
+hdfs dfs -cat /user/hive/warehouse/accident_response_times/nom-du-fichier
 ```
 
 ## This is the tandremo
@@ -140,17 +146,6 @@ hdfs dfs -cat /user/hive/warehouse/ext_people_hbase/nom-du-fichier
 
   * `Run schedule` = 59 min
 
-## PARTIE TENA IZY
-
-* Reproduire le scénario de test pour d'autres tables HBase
-
-  * `ScanHBase`
-
-    * `Table Name` = `<nom-table>`
-  * `PutHDFS`
-
-    * `Directory` = /user/warehouse/hive/`<nom-table>`
-
 * Démarrer Beeline
 
 ```bash
@@ -160,22 +155,27 @@ beeline -u jdbc:hive2://localhost:10000
 * Créer une table **externe** Hive
 
 ```sql
-CREATE EXTERNAL TABLE <nom-table> (
-    rowkey STRING,
-    first_name STRING,
-    last_name STRING,
-    city STRING
+CREATE EXTERNAL TABLE accident_response_times (
+    OBJECTID INT,
+    ARR_HOUR INT,
+    ARR_MIN INT,
+    HOSP_HR INT,
+    HOSP_MN INT
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION '/user/warehouse/hive/<nom-table>/';
+LOCATION '/user/hive/warehouse/accident_response_times/';
 ```
 
 * Vérifier les données
 
 ```sql
-SELECT * FROM <nom-table>;
+SELECT * FROM accident_response_times;
+```
+
+```ou
+SELECT count(*) FROM accident_response_times;
 ```
 
 * Refaire l'opération pour chaque table
