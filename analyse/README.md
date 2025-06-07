@@ -1,4 +1,4 @@
-# Instructions Connexion HDFS vers HIVE via Nifi
+# Instructions pour execution de  l'analyse
 
 ## Prérequis
 
