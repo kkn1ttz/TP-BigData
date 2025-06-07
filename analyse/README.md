@@ -5,8 +5,8 @@
 Avoir complété :
 
 * [installs/Apache Nifi](https://github.com/kkn1ttz/TP-M/blob/master/installs/Apache%20Nifi/README.md)
-* [installs/Hbase] (https://github.com/kkn1ttz/TP-M/blob/master/installs/Hbase/README.md)
-* [installs/Mongo DB] (https://github.com/kkn1ttz/TP-M/blob/master/installs/Mongo%20DB/README.md)
+* [installs/Hbase](https://github.com/kkn1ttz/TP-M/blob/master/installs/Hbase/README.md)
+* [installs/Mongo DB](https://github.com/kkn1ttz/TP-M/blob/master/installs/Mongo%20DB/README.md)
 * [connexions/mysql-nifi-hive](https://github.com/kkn1ttz/TP-M/blob/master/connexions/mysql-nifi-hive/README.md)
 * [connexions/hdfs-nifi-hive](https://github.com/kkn1ttz/TP-M/blob/master/connexions/hdfs-nifi-hive/README.md)
 * [connexions/mongo-nifi-hive](https://github.com/kkn1ttz/TP-M/blob/master/connexions/mongo-nifi-hive/README.md)
@@ -62,4 +62,12 @@ pip install pandas==1.5.3 numpy==1.23.5 jaydebeapi JPype1
 ```
 python analyse.py
 ``
+> Les resulats des analyses doivent s'afficher sous forme de tableau
+
+* Pour desactiver le venv et revenir a la VM normal
+```
+deactivate
+```
+
+
 
