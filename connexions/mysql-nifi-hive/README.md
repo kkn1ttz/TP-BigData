@@ -155,8 +155,8 @@ QUIT;
 
 - Configurer le processor
     - `DBCP Service` = le Controlleur Service creer precedement
-    - `Table Name` = Ref_Work_Zone_Status
-    - `Maximum-value Columns` = WRK_ZONE
+    - `Table Name` = Ref_Work_Zone_Status (pour l'importation des autres tables , renseigner par leur nom respectif)
+    - `Maximum-value Columns` = WRK_ZONE (pour l'importation des autres tables , le maximum-values columns est OBJECTID)
 
 - Ajouter un processor `ConvertRecord` pour convertir le output en CSV
 
@@ -199,7 +199,7 @@ hdfs dfs -cat /user/hive/warehouse/ref_work_zone_status/b7591f3c-3450-49e9-a031-
 ## Attention
 #### Pour que le flow Nifi renvoie des données.
 - Click droit sur le processor `QueryDatabaseTable` -> `View state` -> `Clear state`
-- Le processor enregistre la derniere valeur maximum de la colonne `id` pour ne par renvoyer des lignes deja envoyées *(pas important dans notre cas)*.
+- Le processor enregistre la derniere valeur maximum de la colonne definie dans `Maximum-value Columns` pour ne par renvoyer des lignes deja envoyées *(pas important dans notre cas)*.
 - Ou juste inseré une nouvelle ligne dans `mysql>`.
 
 ## Importation des donnees dans Hive
@@ -214,8 +214,15 @@ nohup hiveserver2 > /dev/null &
 beeline
 ```
 
+* Se connecter 
+```
+!connect jdbc:hive2://localhost:10000
 
-* Créer une table **interne** Hive (exemple, modifier en fonction du shema)
+user : oracle
+password : welcome1
+``` 
+
+* Créer les tables **internes** Hive 
 
 ```sql
 CREATE TABLE Ref_Work_Zone_Status (
@@ -276,7 +283,7 @@ INTO TABLE Accident_Event_Details;
 ```sql
 DESCRIBE FORMATTED <nom-table>;
 ```
-> Dans la section table `Table Type`, si c'est une table interne , ca doit etre `MANAGED_TABLE`et si c'est une table externe , ca doit etre `EXTERNAL_TABLE`
+> Dans la section `Table Type`, si c'est une table interne , ca doit etre `MANAGED_TABLE`et si c'est une table externe , ca doit etre `EXTERNAL_TABLE`
 
 * Vérifier que les données sont bien inserer
 
