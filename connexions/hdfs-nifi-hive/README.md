@@ -15,25 +15,24 @@ Avoir complété :
 start-dfs.sh
 ```
 
-## Mise en place des données dans HDFS (Simulation Source)
-
-* Créer un dossier source dans HDFS et ajouter un fichier CSV
+## Mise en place des données dans HDFS 
+* Mettre le fichier Accident_road_Characteristics.csv qui est dans `datasets/hdfs` , dans un dossier sur vagrant , par exemple `TpBigData/hdfs`
+* Créer un dossier source dans HDFS et ajouter le fichier CSV Accident_road_Characteristics.csv qui est dans `TpBigData/hdfs`
 
 ```bash
-hdfs dfs -mkdir -p /data/people_hdfs
+hdfs dfs -mkdir -p /data/transport/roads/
 
-echo -e "id,first_name,last_name,city\n1,Ada,Lovelace,London\n2,Grace,Hopper,New York" > people.csv
+hdfs dfs -put /vagrant/TpBigData/hdfs/Accident_Road_Characteristics.csv /data/transport/roads/
 
-hdfs dfs -put people.csv /data/people_hdfs/
 ```
 
 * Vérifier les données
 
 ```bash
-hdfs dfs -cat /data/people_hdfs/people.csv
+hdfs dfs -cat /data/transport/roads/Accident_Road_Characteristics.csv | head -n 5
 ```
 
-## Partie Nifi
+## Connexion avec Apache Nifi
 
 * Lancer `Apache Nifi` dans la VM
 
@@ -51,7 +50,7 @@ hdfs dfs -cat /data/people_hdfs/people.csv
 
 * Paramétrer :
 
-  * `Directory` = /data/people_hdfs
+  * `Directory` = /data/transport/roads
   * `Recurse Subdirectories` = true
   * `Minimum File Age` = 0 sec
 
@@ -63,11 +62,12 @@ hdfs dfs -cat /data/people_hdfs/people.csv
 
 * Paramétrer :
 
-  * `Directory` = /user/hive/warehouse/ext_people_hdfs
+  * `Haddop Configuration Ressource`= /opt/nifi/conf/core-site.xml,/opt/nifi/conf/hdfs-site.xml
+  * `Directory` = /user/hive/warehouse/accident_road_characteristics
   * `Conflict Resolution Strategy` = replace
   * `Compression Codec` = NONE
 
-* Relier les processeurs : `ListHDFS` -> `FetchHDFS` -> `PutHDFS`
+* Relier les processeurs les 3 proccesseurs sur Success: `ListHDFS` -> `FetchHDFS` -> `PutHDFS` (le dernier processeur PutHDFS doit etre relier a lui meme)
 
 * Configurer tous les processeurs pour qu'ils soient `valid`
 
@@ -78,56 +78,88 @@ hdfs dfs -cat /data/people_hdfs/people.csv
 
 ## Retour dans la VM - Vérification
 
-* Lister si le dossier `/user/hive/warehouse/ext_people_hdfs` a été créé par Nifi
+* Lister si le dossier `/user/hive/warehouse/accident_road_characteristics` a été créé par Nifi
 
 ```
 hdfs dfs -ls /user/hive/warehouse/ext_people_hdfs
 ```
+* Si le fichier a ete creer mais qu'il y a un `.`devant le fichier creer , vous pouvez le renomer en executant la commmande : 
+
+```
+hdfs dfs -mv /user/hive/warehouse/accident_road_characteristics/.Accident_Road_Characteristics.csv /user/hive/warehouse/accident_road_characteristics/Accident_Road_Characteristics.csv
+```
+> Hive ne prendra pas en compte les fichiers ayant `.`devant son nom donc les donnees ne seront pas inserer si le nom du fichier n'est pas renommer
 
 * Lire le contenu du fichier
 
 ```
-hdfs dfs -cat /user/hive/warehouse/ext_people_hdfs/people.csv
+hdfs dfs -cat /user/hive/warehouse/accident_road_characteristics/Accident_Road_Characteristics.csv
 ```
 
-## This is the tandremo
-#### Pour ne pas surcharger le flow Nifi.
+#### Pour ne pas surcharger le flow Nifi
 - Configurer `Schedulling` du processor `ListHDFS` ou `FetchHDFS`
   - `Run schedule` = 59 min
   - C'est l'intervalle entre laquelle le processor s'execute
 
-## PARTIE TENA IZY
+## Importation des donnees dans Hive
 
-* Reproduire le scenario de test, voici les parties qui changent
-  * On suppose que les "repertoires" (tables) dans HDFS sont deja crées et remplies via scripts d'insertion
-  * `ListHDFS` 
-    * `Directory` = /data/`<nom-table>`
-  * `PutHDFS`
-    * `Directory`= /user/warehouse/hive/`<nom-table>`
+* Démarrer Hive
+```
+nohup hive --service metastore > /dev/null &
+nohup hiveserver2 > /dev/null &
+```
 
 * Démarrer Beeline
+```
+beeline
+```
 
-* Créer une table **externe** Hive
+* Se connecter 
+```
+!connect jdbc:hive2://localhost:10000
+
+user : oracle
+password : welcome1
+``` 
+
+* Créer la table **externe** Hive et inserer les donnees
 
 ```sql
-CREATE EXTERNAL TABLE <nom-table> (
-    _id STRING,
-    first_name STRING,
-    last_name STRING,
-    city STRING,
-    ...
+CREATE EXTERNAL TABLE Accident_Road_Characteristics (
+    OBJECTID INT,
+    TWAY_ID STRING,
+    TWAY_ID2 STRING,
+    ROUTE INT,
+    ROUTENAME STRING,
+    FUNC_SYS INT,
+    FUNC_SYSNAME STRING,
+    RD_OWNER INT,
+    RD_OWNERNAME STRING,
+    NHS INT,
+    NHSNAME STRING
 )
 ROW FORMAT DELIMITED
 FIELDS TERMINATED BY ','
 STORED AS TEXTFILE
-LOCATION '/user/warehouse/hive/<nom-table>/';
+LOCATION '/user/hive/warehouse/accident_road_characteristics/'
+TBLPROPERTIES ('skip.header.line.count'='1');
 ```
 
-* Vérifier les données
+* Pour verifier que la tables creer est bien une table externe a Hive
+```
+DESCRIBE FORMATTED accident_road_characteristics;
+```
+> Dans la section `Table Type`, si c'est une table interne , ca doit etre `MANAGED_TABLE`et si c'est une table externe , ca doit etre `EXTERNAL_TABLE`
+
+
+* Vérifier que les données sont bien inserer
 
 ```sql
-SELECT * FROM <nom-table>;
+SELECT * FROM accident_road_characteristics;
+
+ou 
+
+SELECT count(*) FROM accident_road_characteristics;
 ```
 
-* Refaire l'operation pour chaque table
-* Table maintenant accessible via python
+* La tables est maintenant accessible via python
