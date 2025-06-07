@@ -38,6 +38,7 @@ start-dfs.sh
 * Lancer HBase
 
 ```bash
+source ~/.bashrc
 /opt/hbase/bin/start-hbase.sh
 ```
 
