@@ -194,7 +194,7 @@ hdfs dfs -cat /user/hive/warehouse/ref_work_zone_status/b7591f3c-3450-49e9-a031-
 
 - Si les donnes dans le fichier s'affiche,  c'est OK pour la partie MySQL -> Nifi -> Hive
 
-- Reproduire le meme scenario pour l'importation des autres tables Accidents_Core_Facts et Accident_Event_Details
+- `Reproduire le meme scenario pour l'importation des autres tables Accidents_Core_Facts et Accident_Event_Details`
 
 ## Attention
 #### Pour que le flow Nifi renvoie des données.
