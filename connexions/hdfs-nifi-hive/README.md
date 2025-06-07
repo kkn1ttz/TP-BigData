@@ -29,10 +29,10 @@ hdfs dfs -put /vagrant/TpBigData/hdfs/Accident_Road_Characteristics.csv /data/tr
 * Vérifier les données
 
 ```bash
-hdfs sfs -cat /data/transport/roads/Accident_Road_Characteristics.csv | head -n 5
+hdfs dfs -cat /data/transport/roads/Accident_Road_Characteristics.csv | head -n 5
 ```
 
-## Partie Nifi
+## Connexion avec Apache Nifi
 
 * Lancer `Apache Nifi` dans la VM
 
@@ -83,11 +83,12 @@ hdfs sfs -cat /data/transport/roads/Accident_Road_Characteristics.csv | head -n 
 ```
 hdfs dfs -ls /user/hive/warehouse/ext_people_hdfs
 ```
-> Si le fichier a ete creer mais qu'il y a un `.`devant le fichier creer , vous pouvez le renomer en executant la commmande : 
+* Si le fichier a ete creer mais qu'il y a un `.`devant le fichier creer , vous pouvez le renomer en executant la commmande : 
 
 ```
 hdfs dfs -mv /user/hive/warehouse/accident_road_characteristics/.Accident_Road_Characteristics.csv /user/hive/warehouse/accident_road_characteristics/Accident_Road_Characteristics.csv
 ```
+> Hive ne prendra pas en compte les fichiers ayant `.`devant son nom donc les donnees ne seront pas inserer si le nom du fichier n'est pas renommer
 
 * Lire le contenu du fichier
 
@@ -95,7 +96,7 @@ hdfs dfs -mv /user/hive/warehouse/accident_road_characteristics/.Accident_Road_C
 hdfs dfs -cat /user/hive/warehouse/accident_road_characteristics/Accident_Road_Characteristics.csv
 ```
 
-#### Pour ne pas surcharger le flow Nifi.
+#### Pour ne pas surcharger le flow Nifi
 - Configurer `Schedulling` du processor `ListHDFS` ou `FetchHDFS`
   - `Run schedule` = 59 min
   - C'est l'intervalle entre laquelle le processor s'execute
@@ -121,7 +122,7 @@ user : oracle
 password : welcome1
 ``` 
 
-* Créer la table **externe** Hive
+* Créer la table **externe** Hive et inserer les donnees
 
 ```sql
 CREATE EXTERNAL TABLE Accident_Road_Characteristics (
@@ -143,6 +144,13 @@ STORED AS TEXTFILE
 LOCATION '/user/hive/warehouse/accident_road_characteristics/'
 TBLPROPERTIES ('skip.header.line.count'='1');
 ```
+
+* Pour verifier que la tables creer est bien une table externe a Hive
+```
+DESCRIBE FORMATTED accident_road_characteristics;
+```
+> Dans la section `Table Type`, si c'est une table interne , ca doit etre `MANAGED_TABLE`et si c'est une table externe , ca doit etre `EXTERNAL_TABLE`
+
 
 * Vérifier que les données sont bien inserer
 
