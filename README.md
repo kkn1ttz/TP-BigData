@@ -1,10 +1,11 @@
 # Fichiers partager pour TP-M
 
 ## Utilisation
-- `installs/` pour les installations des composants
-- `connexions/` pour les connexions entres composants
-- `datasets/` pour les données en formats .csv
 - `analyse/` pour le script python et les requetes utiliser pour effectuer l'analyse des donnees
+- `connexions/` pour les connexions entres composants
+- `installs/` pour les installations des composants
+- `datasets/` pour les données en formats .csv
+- `scripts/` pour les programmes java utiliser pour injecter les sources de données.
 
 ---
 

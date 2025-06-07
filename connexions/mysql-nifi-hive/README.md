@@ -4,6 +4,15 @@
 Avoir completer :
 * [installs/Apache Nifi](https://github.com/kkn1ttz/TP-M/tree/master/installs/Apache%20Nifi)
 
+## Utilisation template
+
+* Si vous souhaitez importer directement le template du flow nifi :
+  * Click droit sur le `canvas` dans l'interface nifi
+  * Choisir `Upload Template`
+  * Choisir le fichier `mysql-nifi-hive.xml`
+
+* Les instructions pour reproduire le flow Nifi sont les suivantes.
+
 ## Mise en place intiale
 - Telecharger et placer le driver `mysql` pour nifi
 

@@ -8,6 +8,15 @@ Avoir complété :
 * [installs/Hadoop HDFS](https://github.com/kkn1ttz/TP-M/tree/master/installs/Hadoop)
 * [connexions/mysql-nifi-hive](https://github.com/kkn1ttz/TP-M/tree/master/connexions/mysql-nifi-hive)
 
+## Utilisation template
+
+* Si vous souhaitez importer directement le template du flow nifi :
+  * Click droit sur le `canvas` dans l'interface nifi
+  * Choisir `Upload Template`
+  * Choisir le fichier `hdfs-nifi-hive.xml`
+
+* Les instructions pour reproduire le flow Nifi sont les suivantes.
+
 ## Mise en place initiale
 
 * Lancer HDFS
@@ -96,13 +105,15 @@ hdfs dfs -mv /user/hive/warehouse/accident_road_characteristics/.Accident_Road_C
 ```
 hdfs dfs -cat /user/hive/warehouse/accident_road_characteristics/Accident_Road_Characteristics.csv
 ```
-
+## Warning
 #### Pour ne pas surcharger le flow Nifi
 - Configurer `Schedulling` du processor `ListHDFS` ou `FetchHDFS`
   - `Run schedule` = 59 min
   - C'est l'intervalle entre laquelle le processor s'execute
 
 ## Importation des donnees dans Hive
+
+* Configurer le flow nifi utiliser precedement en fonction des configurations.
 
 * Démarrer Hive
 ```

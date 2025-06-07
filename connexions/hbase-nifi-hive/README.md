@@ -138,13 +138,14 @@ hdfs dfs -ls /user/hive/warehouse/accident_response_times
 hdfs dfs -cat /user/hive/warehouse/accident_response_times/nom-du-fichier
 ```
 
-## This is the tandremo
-
+## Warning
 #### Pour ne pas surcharger le flow Nifi.
 
 * Configurer `Scheduling` du processor `GenerateFlowFile`
 
   * `Run schedule` = 59 min
+
+## Importation des donnees dans Hive
 
 * Démarrer Beeline
 
