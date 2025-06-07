@@ -2,7 +2,7 @@
 <template encoding-version="1.3">
     <description>avec des config et donnees de tests</description>
     <groupId>258a76c3-0197-1000-1b42-66ce87b400eb</groupId>
-    <name>mongo-hive</name>
+    <name>mongo-nifi-hive</name>
     <snippet>
         <connections>
             <id>69d9ebfa-0efd-34ea-0000-000000000000</id>

@@ -8,8 +8,16 @@ Avoir complété :
 * [installs/MongoDB](https://github.com/kkn1ttz/TP-M/tree/master/installs/Mongo%20DB)
 * [connexions/mysql-nifi-hive](https://github.com/kkn1ttz/TP-M/tree/master/connexions/mysql-nifi-hive)
 
-## Mise en place initiale
+## Utilisation template
 
+* Si vous souhaitez importer directement le template du flow nifi :
+  * Click droit sur le `canvas` dans l'interface nifi
+  * Choisir `Upload Template`
+  * Choisir le fichier `mongo-nifi-hive.xml`
+
+* Les instructions pour reproduire le flow Nifi sont les suivantes.
+
+## Mise en place initiale
 
 * Télécharger et deplacer les drivers MongoDB pour nifi
 

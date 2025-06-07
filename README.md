@@ -1,10 +1,11 @@
 # Fichiers partager pour TP-M
 
 ## Utilisation
-- `installs/` pour les installations des composants
-- `connexions/` pour les connexions entres composants
-- `datasets/` pour les données en formats .csv
 - `analyse/` pour le script python et les requetes utiliser pour effectuer l'analyse des donnees
+- `connexions/` pour les connexions entres composants
+- `installs/` pour les installations des composants
+- `datasets/` pour les données en formats .csv
+- `scripts/` pour les programmes java utiliser pour injecter les sources de données.
 
 ---
 
@@ -27,3 +28,12 @@ sudo nano /etc/resolv.conf
 ```
 nameserver 8.8.8.8
 ```
+
+---
+
+## Contributors
+* 23, Raharison amboara Tiana Avotra
+* 22, Rahajason Aroniaina Saotra
+* 50, Ravelomahefa Serge
+* 2, Andriamboavonjy Tafitasoa Tojohery Sambatra
+* 57, Zahirhoussen Zoulfikar

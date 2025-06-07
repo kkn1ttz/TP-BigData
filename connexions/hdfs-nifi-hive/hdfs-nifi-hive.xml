@@ -3,7 +3,7 @@
     <description>avec des configs et donnees de tests
 </description>
     <groupId>258a76c3-0197-1000-1b42-66ce87b400eb</groupId>
-    <name>hdfs-hive</name>
+    <name>hdfs-nifi-hive</name>
     <snippet>
         <connections>
             <id>314cec60-ff7f-36be-0000-000000000000</id>
