@@ -28,3 +28,12 @@ sudo nano /etc/resolv.conf
 ```
 nameserver 8.8.8.8
 ```
+
+---
+
+## Contributors
+* 23, Raharison amboara Tiana Avotra
+* 22, Rahajason Aroniaina Saotra
+* 50, Ravelomahefa Serge
+* 2, Andriamboavonjy Tafitasoa Tojohery Sambatra
+* 57, Zahirhoussen Zoulfikar
