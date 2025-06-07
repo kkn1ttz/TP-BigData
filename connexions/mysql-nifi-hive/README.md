@@ -273,10 +273,10 @@ STORED AS TEXTFILE;
 LOAD DATA INPATH '/user/hive/warehouse/ref_work_zone_status.csv'
 INTO TABLE Ref_Work_Zone_Status;
 
-LOAD DATA LOCAL INPATH '/vagrant/tes_donnees/accidents_core_facts.csv'
+LOAD DATA LOCAL INPATH '/vagrant/warehouse/accidents_core_facts.csv'
 INTO TABLE Accidents_Core_Facts;
 
-LOAD DATA LOCAL INPATH '/vagrant/tes_donnees/accident_event_details.csv'
+LOAD DATA LOCAL INPATH '/vagrant/warehouse/accident_event_details.csv'
 INTO TABLE Accident_Event_Details;
 ```
 * Pour verifier que les tables creer sont bien des table interne a Hive
